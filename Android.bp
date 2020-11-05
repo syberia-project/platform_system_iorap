@@ -66,6 +66,11 @@ cc_defaults {
 
     // build all ioraps for host.
     host_supported: true,
+    target: {
+        darwin: {
+            enabled: false,
+        }
+    },
 }
 
 cc_defaults {
@@ -251,6 +256,11 @@ cc_test {
 cc_test_host {
     name: "iorapd-host-tests",
     gtest: false,  // we use gtest *and* gmock.
+    target: {
+        darwin: {
+            enabled: false,
+        }
+    },
     defaults: [
         "iorap-default-flags",
         "iorap-default-dependencies",
