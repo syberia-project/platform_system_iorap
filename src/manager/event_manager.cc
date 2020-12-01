@@ -19,6 +19,7 @@
 #include "common/expected.h"
 #include "common/printer.h"
 #include "common/rx_async.h"
+#include "common/property.h"
 #include "common/trace.h"
 #include "db/app_component_name.h"
 #include "db/file_models.h"
@@ -1226,18 +1227,11 @@ class EventManager::Impl {
   void RefreshSystemProperties(::android::Printer& printer) {
     // TODO: read all properties from one config class.
     // PH properties do not work if they contain ".". "_" was instead used here.
-    const char* ph_namespace = "runtime_native_boot";
-    tracing_allowed_ = server_configurable_flags::GetServerConfigurableFlag(
-        ph_namespace,
-        "iorap_perfetto_enable",
-        ::android::base::GetProperty("iorapd.perfetto.enable", /*default*/"true")) == "true";
+    tracing_allowed_ = common::IsTracingEnabled(/*default_value=*/"false");
     s_tracing_allowed = tracing_allowed_;
     printer.printFormatLine("iorapd.perfetto.enable = %s", tracing_allowed_ ? "true" : "false");
 
-    readahead_allowed_ = server_configurable_flags::GetServerConfigurableFlag(
-        ph_namespace,
-        "iorap_readahead_enable",
-        ::android::base::GetProperty("iorapd.readahead.enable", /*default*/"true")) == "true";
+    readahead_allowed_ = common::IsReadAheadEnabled(/*default_value=*/"false");
     s_readahead_allowed = readahead_allowed_;
     printer.printFormatLine("iorapd.readahead.enable = %s", s_readahead_allowed ? "true" : "false");
 
@@ -1253,7 +1247,7 @@ class EventManager::Impl {
          * Blacklisted packages are ignored by iorapd.
          */
         server_configurable_flags::GetServerConfigurableFlag(
-            ph_namespace,
+            common::ph_namespace,
             "iorap_blacklisted_packages",
             ::android::base::GetProperty("iorapd.blacklist_packages",
                                          /*default*/""))
