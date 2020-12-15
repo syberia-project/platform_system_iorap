@@ -18,6 +18,7 @@ service iorapd /system/bin/iorapd
     group iorapd
     capabilities DAC_READ_SEARCH
     writepid /dev/cpuset/system-background/tasks
+    oneshot
 # TODO: should this be something else like performance/tasks?
 # the main 'activity hint' thread needs to be fairly high priority to kick off
 # tracing or prefetching asap.
