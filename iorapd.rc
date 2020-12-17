@@ -18,12 +18,14 @@ service iorapd /system/bin/iorapd
     group iorapd
     capabilities DAC_READ_SEARCH
     writepid /dev/cpuset/system-background/tasks
-    oneshot
 # TODO: should this be something else like performance/tasks?
 # the main 'activity hint' thread needs to be fairly high priority to kick off
 # tracing or prefetching asap.
 
 on property:ro.iorapd.enable=false
+    stop iorapd
+
+on property:persist.device_config.runtime_native_boot.iorap_perfetto_enable=false && property:persist.device_config.runtime_native_boot.iorap_readahead_enable=false
     stop iorapd
 
 on post-fs-data
