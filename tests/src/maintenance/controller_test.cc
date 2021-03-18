@@ -102,9 +102,37 @@ MATCHER_P(AreArgsExpected, compiled_trace_path, "") {
       "--timestamp_limit_ns", "2",
       "--timestamp_limit_ns", "18446744073709551615",
       "--timestamp_limit_ns", "8",
+       "--pid",
+       "1",
+       "--pid",
+       "3",
+       "--pid",
+       "4",
       "--output-text",
       "--output-proto", compiled_trace_path,
       "--verbose" };
+  return arg == expect;
+}
+
+MATCHER_P(AreArgsExpectedNoDex, compiled_trace_path, "") {
+  std::vector<std::string> expect =
+    { "1.txt",
+      "3.txt",
+      "4.txt",
+      "--timestamp_limit_ns", "2",
+      "--timestamp_limit_ns", "18446744073709551615",
+      "--timestamp_limit_ns", "8",
+       "--pid",
+       "1",
+       "--pid",
+       "3",
+       "--pid",
+       "4",
+      "--output-text",
+      "--output-proto", compiled_trace_path,
+      "--verbose",
+      "--denylist-filter",
+      "[.](art|oat|odex|vdex|dex)$"};
   return arg == expect;
 }
 
@@ -124,7 +152,8 @@ TEST_F(ControllerTest, CompilationController) {
     /*verbose=*/true,
     /*recompile=*/false,
     /*min_traces=*/3,
-    mock_exec};
+    mock_exec,
+    /*exclude_dex_files=*/false};
 
   ON_CALL(*mock_exec, Fork())
       .WillByDefault(Return(-2));
@@ -144,7 +173,8 @@ TEST_F(ControllerTest, CompilationController) {
     /*verbose=*/true,
     /*recompile=*/true,
     /*min_traces=*/3,
-    mock_exec};
+    mock_exec,
+    /*exclude_dex_files=*/false};
 
   // Create a fake compiled trace file to test recompile.
   std::ofstream tmp_file;
@@ -152,6 +182,24 @@ TEST_F(ControllerTest, CompilationController) {
   tmp_file.close();
 
   CompileAppsOnDevice(db, params2);
+
+  // Recompile
+  ControllerParameters params3{
+    /*output_text=*/true,
+    /*inode_textcache=*/std::nullopt,
+    /*verbose=*/true,
+    /*recompile=*/true,
+    /*min_traces=*/3,
+    mock_exec,
+    /*exclude_dex_files=*/true};
+
+  EXPECT_CALL(*mock_exec,
+              Execve("/system/bin/iorap.cmd.compiler",
+                     AreArgsExpectedNoDex(compiled_trace_path),
+                     nullptr))
+      .Times(1);
+
+  CompileAppsOnDevice(db, params3);
 }
 
 }  // namespace iorap::maintenance

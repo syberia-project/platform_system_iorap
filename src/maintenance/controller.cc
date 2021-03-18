@@ -44,6 +44,7 @@ namespace iorap::maintenance {
 
 const constexpr int64_t kCompilerCheckIntervalMs = 10;
 static constexpr size_t kMinTracesForCompilation = 1;
+const constexpr char* kDenyListFilterDexFiles = "[.](art|oat|odex|vdex|dex)$";
 
 struct LastJobInfo {
   time_t last_run_ns_{0};
@@ -121,6 +122,10 @@ std::vector<std::string> MakeCompilerParams(const CompilerForkParameters& params
 
     if (controller_params.verbose) {
       argv.push_back("--verbose");
+    }
+
+    if (controller_params.exclude_dex_files) {
+      common::AppendArgs(argv, "--denylist-filter", kDenyListFilterDexFiles);
     }
 
     return argv;
