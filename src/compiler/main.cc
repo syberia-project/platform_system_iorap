@@ -37,7 +37,8 @@ void Usage(char** argv) {
   std::cerr << "" << std::endl;
   std::cerr << "  Optional flags:" << std::endl;
   std::cerr << "    --help,-h                  Print this Usage." << std::endl;
-  std::cerr << "    --blacklist-filter,-bf     Specify regex acting as a blacklist filter." << std::endl;
+  std::cerr << "    --denylist-filter,-df     Specify regex acting as a denylist filter."
+            << std::endl;
   std::cerr << "                               Filepaths matching this regex are removed from the output file." << std::endl;
   std::cerr << "    --output-text,-ot          Output ascii text instead of protobuf (default off)." << std::endl;
   std::cerr << "    --output-proto $,-op $     TraceFile tracebuffer output file (default stdout)." << std::endl;
@@ -95,9 +96,9 @@ int Main(int argc, char** argv) {
       }
       arg_inode_textcache = arg_next;
       ++arg;
-    } else if (argstr == "--blacklist-filter" || argstr == "-bf") {
+    } else if (argstr == "--denylist-filter" || argstr == "-df") {
       if (!has_arg_next) {
-        std::cerr << "Missing --blacklist-filter <value>" << std::endl;
+        std::cerr << "Missing --denylist-filter <value>" << std::endl;
         return 1;
       }
       arg_blacklist_filter = arg_next;

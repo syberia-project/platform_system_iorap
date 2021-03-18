@@ -38,6 +38,10 @@ inline bool IsReadAheadEnabled(const std::string& default_value) {
       ::android::base::GetProperty("iorapd.readahead.enable", default_value)) == "true";
 }
 
+inline bool ExcludeDexFiles(bool default_value) {
+  return ::android::base::GetBoolProperty("iorapd.exclude_dex_files", default_value);
+}
+
 }  // namespace iorap::common
 
 #endif  // IORAP_UTILS_PROPERTY_H_
