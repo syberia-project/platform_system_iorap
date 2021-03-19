@@ -1016,10 +1016,10 @@ class EventManager::Impl {
                  << ")";
 
     if (common::ExcludeDexFiles(kExcludeDexFilesDefault)) {
-      return PurgePackage(event.package_name);
+      LOG(VERBOSE) << "Dex files are excluded. Skip the purging.";
+      return true;
     }
-
-    return true;
+    return PurgePackage(event.package_name);
   }
 
   bool OnJobScheduledEvent(RequestId request_id,
