@@ -142,7 +142,7 @@ TEST_F(CompilerTest, BlacklistFilterArtFiles) {
   std::string blacklist_filter = "[.](art|oat|odex|vdex|dex)$";
 
   // iorap.cmd.compiler -op output.pb -it common_textcache -ot
-  //                    --blacklist-filter "[.](art|oat|odex|vdex|dex)$" common_perfetto_trace.pb
+  //                    --denylist-filter "[.](art|oat|odex|vdex|dex)$" common_perfetto_trace.pb
 
   std::vector<CompilationInput> perfetto_traces =
       MakeCompilationInputs(input_file_names, /* timestamp_limit_ns= */{});
